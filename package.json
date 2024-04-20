@@ -1,0 +1,26 @@
+{
+  "name": "rush-lifting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "backend": "nodemon backend/index.ts",
+    "frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.2",
+    "nodemon": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.7"
+  }
+}
