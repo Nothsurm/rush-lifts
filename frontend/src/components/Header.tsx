@@ -15,6 +15,9 @@ import {
 import { Link } from "react-router-dom"
 import { Separator } from "./ui/separator"
 import Logo from "./Logo"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
+import UsernameMenu from "./UsernameMenu"
  
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -55,6 +58,9 @@ const components: { title: string; href: string; description: string }[] = [
 ]
  
 export function Header() {
+  const { userInfo } = useSelector((state: RootState) => state.auth)
+  const { userInfoLocal } = useSelector((state: RootState) => state.authRememberMe)
+
   return (
     <div className="flex flex-row flex-wrap gap-4 justify-around max-w-7xl mx-auto">
     <Logo />
@@ -110,11 +116,17 @@ export function Header() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link to="/register" >
+          { userInfo || userInfoLocal ? (
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Register / Login
+              <UsernameMenu />
             </NavigationMenuLink>
-          </Link>
+          ) : (
+            <Link to="/login" >
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                Login / Register
+              </NavigationMenuLink>
+            </Link>
+          )}
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

@@ -1,3 +1,4 @@
+import React from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -14,17 +15,15 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
-import { useRegisterMutation } from "@/redux/api/usersApiSlice"
+import { useLoginMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
 import { setCredentials } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
+import { setRememberMeCredentials } from "@/redux/features/auth/authRememberMeSlice"
 
 const formSchema = z.object({
-  username: z.string().min(5, {
-    message: "Username must be at least 5 characters.",
-  }),
   email: z.string().email({
     message: "Inavlid email address"
   }),
@@ -37,13 +36,14 @@ export type UserData = z.infer<typeof formSchema>
 
 export default function Register() {
   const [visible, setVisible] = useState(false)
-  const [register, {isLoading}] = useRegisterMutation()
+  const [isChecked, setIsChecked] = useState(false);
+  const [login, {isLoading}] = useLoginMutation()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const form = useForm<UserData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: ""
     },
@@ -51,17 +51,32 @@ export default function Register() {
 
   async function onSubmit(values: UserData) {
     try {
-      const res = await register({
-        username: values.username,
+      const res = await login({
         email: values.email,
         password: values.password
       }).unwrap()
-      dispatch(setCredentials({...res}))
-      toast.success(`User ${values.username} Successfully Created`)
+      if (isChecked) {
+        dispatch(setRememberMeCredentials({...res}))
+      } else {
+        dispatch(setCredentials({...res}))
+      }
+      toast.success(`${values.email} Successfully Logged In`)
+      navigate('/')
     } catch (error: any) {
       toast.error(`${error.data}`)
     }
-  }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      console.log('checked');
+      
+      setIsChecked(true)
+    } else {
+      setIsChecked(false)
+    }
+  };
+
   return (
     <div className="max-w-64 mx-auto mt-20">
       <Form {...form}>
@@ -69,21 +84,8 @@ export default function Register() {
         <div className="flex flex-col gap-2">
             <p className='flex justify-center font-semibold text-3xl'>Welcome</p>
             <Separator />
-            <p className='flex justify-center font-semibold text-3xl text-blue-500'>Register</p>
+            <p className='flex justify-center font-semibold text-3xl text-blue-500'>Login</p>
         </div>
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField 
             control={form.control}
             name='email'
@@ -123,21 +125,34 @@ export default function Register() {
               </FormItem>
             )}    
           />
+          <div className="flex items-center space-x-2">
+            <input 
+              type="checkbox"
+              id='rememberMe' 
+              onChange={handleChange} 
+            />
+            <label
+                htmlFor="rememberMe"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+                Remember Me
+            </label>
+          </div>
           { isLoading ? (
             <Button type="submit" disabled={isLoading} className="bg-blue-500 hover:bg-blue-600 w-full">
-              Signing Up...
+              Signing In...
             </Button>
           ): (
             <Button type="submit" className="bg-blue-500 hover:bg-blue-600 w-full">
-              Sign Up
+              Sign In
             </Button>
           )}
         </form>
         <div className="flex flex-col gap-4 mt-4">
           <div className="flex gap-2 text-sm">
-            <p>Already have an account?</p>
-            <Link to='/login' className='text-blue-500 hover:underline'>
-              Sign In
+            <p>Don't have an account?</p>
+            <Link to='/register' className='text-blue-500 hover:underline'>
+              Register
             </Link>
           </div>
           <Separator />

@@ -15,6 +15,7 @@ import ErrorPage from './errorPage.tsx'
 import Home from './pages/Home.tsx'
 import Register from './pages/auth/Register.tsx'
 import { Toaster } from 'sonner'
+import Login from './pages/auth/Login.tsx'
 
 
 const router = createBrowserRouter([
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "/register", element: <Register /> },
+      { path: "/login", element: <Login /> },
     ]
   }
 ])

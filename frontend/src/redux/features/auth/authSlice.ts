@@ -16,13 +16,13 @@ const authSlice = createSlice({
             sessionStorage.setItem(import.meta.env.VITE_STORAGE_KEY, JSON.stringify(action.payload))
         },
 
-        logout: (state) => {
+        logoutSessionStorage: (state) => {
             state.userInfo = null;
             sessionStorage.clear();
         },
     },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, logoutSessionStorage } = authSlice.actions;
 
 export default authSlice.reducer;

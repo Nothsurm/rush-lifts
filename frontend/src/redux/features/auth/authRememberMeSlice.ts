@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    userInfo: 
+    userInfoLocal: 
         localStorage.getItem(import.meta.env.VITE_LOCALSTORAGE_KEY as string) 
         ? JSON.parse(localStorage.getItem(import.meta.env.VITE_LOCALSTORAGE_KEY) as string) 
         : null,
@@ -12,7 +12,7 @@ const authRememberMeSlice = createSlice({
     initialState,
     reducers: {
         setRememberMeCredentials: (state, action) => {
-            state.userInfo = action.payload;
+            state.userInfoLocal = action.payload;
             const expirationTime = (new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toString()
             localStorage.setItem('expirationTime', expirationTime)
             const todaysDate = (new Date().getTime()).toString()
@@ -24,13 +24,13 @@ const authRememberMeSlice = createSlice({
             }
         },
 
-        logout: (state) => {
-            state.userInfo = null;
+        logoutLocalStorage: (state) => {
+            state.userInfoLocal = null;
             localStorage.clear();
         },
     },
 });
 
-export const { setRememberMeCredentials, logout } = authRememberMeSlice.actions;
+export const { setRememberMeCredentials, logoutLocalStorage } = authRememberMeSlice.actions;
 
 export default authRememberMeSlice.reducer;
