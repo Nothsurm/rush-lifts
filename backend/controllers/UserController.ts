@@ -101,11 +101,8 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
             createToken(res, existingUser._id)
 
             res.status(201)
-            .json({
-                _id: existingUser._id, 
-                username: existingUser.username, 
+            .json({ 
                 email: existingUser.email, 
-                isAdmin: existingUser.isAdmin,
             });
             return;
         }

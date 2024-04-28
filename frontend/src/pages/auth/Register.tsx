@@ -17,7 +17,9 @@ import { useState } from "react"
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { Link } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
-import Logo from "@/components/Logo"
+import { useRegisterMutation } from "@/redux/api/usersApiSlice"
+import { useDispatch } from "react-redux"
+import { setCredentials } from "@/redux/features/auth/authSlice"
 
 const formSchema = z.object({
   username: z.string().min(5, {
@@ -35,6 +37,8 @@ export type UserData = z.infer<typeof formSchema>
 
 export default function Register() {
   const [visible, setVisible] = useState(false)
+  const [register, {isLoading}] = useRegisterMutation()
+  const dispatch = useDispatch()
 
   const form = useForm<UserData>({
     resolver: zodResolver(formSchema),
@@ -46,9 +50,12 @@ export default function Register() {
   })
 
   async function onSubmit(values: UserData) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    const res = await register({
+      username: values.username,
+      email: values.email,
+      password: values.password
+    }).unwrap()
+    dispatch(setCredentials({...res}))
   }
   return (
     <div className="max-w-64 mx-auto mt-20">
