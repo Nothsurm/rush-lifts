@@ -14,6 +14,8 @@ import store from './redux/store.ts'
 import ErrorPage from './errorPage.tsx'
 import Home from './pages/Home.tsx'
 import Register from './pages/auth/Register.tsx'
+import { Toaster } from 'sonner'
+
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
+    <Toaster visibleToasts={1} position='top-right' richColors/>
     <RouterProvider router={router} />
   </Provider>
 )

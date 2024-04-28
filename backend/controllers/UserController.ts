@@ -25,10 +25,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
         res.status(201)
             .json({
-                _id: newUser._id, 
-                username: newUser.username, 
                 email: newUser.email, 
-                isAdmin: newUser.isAdmin,
             });
     } catch (error) {
         res.status(400)

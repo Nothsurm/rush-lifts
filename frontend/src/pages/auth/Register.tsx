@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator"
 import { useRegisterMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
 import { setCredentials } from "@/redux/features/auth/authSlice"
+import { toast } from "sonner"
 
 const formSchema = z.object({
   username: z.string().min(5, {
@@ -50,12 +51,17 @@ export default function Register() {
   })
 
   async function onSubmit(values: UserData) {
-    const res = await register({
-      username: values.username,
-      email: values.email,
-      password: values.password
-    }).unwrap()
-    dispatch(setCredentials({...res}))
+    try {
+      const res = await register({
+        username: values.username,
+        email: values.email,
+        password: values.password
+      }).unwrap()
+      dispatch(setCredentials({...res}))
+      toast.success(`User ${values.username} Successfully Created`)
+    } catch (error: any) {
+      toast.error(`${error.data}`)
+    }
   }
   return (
     <div className="max-w-64 mx-auto mt-20">
