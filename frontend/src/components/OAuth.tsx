@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { app } from "@/firebase"
 import { useGoogleMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
-import { setCredentials } from "@/redux/features/auth/authSlice"
+import { signInSuccess } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 
@@ -23,7 +23,7 @@ export default function OAuth() {
             }).unwrap()
             toast.success(`${result.user.email} Successfully Logged In`)
             navigate('/')
-            dispatch(setCredentials({...res}))
+            dispatch(signInSuccess(res))
         } catch (error: any) {
             toast.error(`${error.data}`)
         }

@@ -1,4 +1,3 @@
-import React from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,9 +18,8 @@ import { Link, useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useLoginMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
-import { setCredentials } from "@/redux/features/auth/authSlice"
+import { signInStart, signInSuccess, signInFailure } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
-import { setRememberMeCredentials } from "@/redux/features/auth/authRememberMeSlice"
 import OAuth from "@/components/OAuth"
 
 const formSchema = z.object({
@@ -37,7 +35,6 @@ export type UserData = z.infer<typeof formSchema>
 
 export default function Register() {
   const [visible, setVisible] = useState(false)
-  const [isChecked, setIsChecked] = useState(false);
   const [login, {isLoading}] = useLoginMutation()
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -52,29 +49,27 @@ export default function Register() {
 
   async function onSubmit(values: UserData) {
     try {
+      dispatch(signInStart())
       const res = await login({
         email: values.email,
         password: values.password
       }).unwrap()
-      if (isChecked) {
-        dispatch(setRememberMeCredentials({...res}))
-      } else {
-        dispatch(setCredentials({...res}))
-      }
+      dispatch(signInSuccess(res))
       toast.success(`${values.email} Successfully Logged In`)
       navigate('/')
     } catch (error: any) {
+      dispatch(signInFailure(error.message))
       toast.error(`${error.data}`)
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  /*const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setIsChecked(true)
     } else {
       setIsChecked(false)
     }
-  };
+  };*/
 
   return (
     <div className="max-w-64 mx-auto mt-20">
@@ -124,19 +119,6 @@ export default function Register() {
               </FormItem>
             )}    
           />
-          <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox"
-              id='rememberMe' 
-              onChange={handleChange} 
-            />
-            <label
-                htmlFor="rememberMe"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-                Remember Me
-            </label>
-          </div>
           { isLoading ? (
             <Button type="submit" disabled={isLoading} className="bg-blue-500 hover:bg-blue-600 w-full">
               Signing In...

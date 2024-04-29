@@ -1,19 +1,28 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import authReducer from './features/auth/authSlice.ts'
-import authRememberMeReducer from './features/auth/authRememberMeSlice.ts'
 import { apiSlice } from './api/apiSlice.ts'
+import { persistReducer, persistStore } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 
-const store = configureStore({
-    reducer: {
-        [apiSlice.reducerPath]: apiSlice.reducer,
-        auth: authReducer,
-        authRememberMe: authRememberMeReducer
+const rootReducer = combineReducers({
+    [apiSlice.reducerPath]: apiSlice.reducer,
+    auth: authReducer,
+})
 
-    },
+const persistConfig = {
+    key: 'root',
+    version: 1,
+    storage,
+}
 
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+export const store = configureStore({
+    reducer: { persistedReducer },
+
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
     devTools: true,
 })
 export type RootState = ReturnType<typeof store.getState>
 
-export default store
+export const persistor = persistStore(store)

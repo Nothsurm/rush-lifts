@@ -1,28 +1,83 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    userInfo: 
-        sessionStorage.getItem(import.meta.env.VITE_STORAGE_KEY as string) 
-        ? JSON.parse(sessionStorage.getItem(import.meta.env.VITE_STORAGE_KEY) as string) 
-        : null,
+    currentUser: null,
+    error: null,
+    loading: false
 }
 
 const authSlice = createSlice({
-    name: 'auth',
+    name: 'user',
     initialState,
     reducers: {
-        setCredentials: (state, action) => {
-            state.userInfo = action.payload;
-            sessionStorage.setItem(import.meta.env.VITE_STORAGE_KEY, JSON.stringify(action.payload))
+        signInStart: (state) => {
+            state.loading = true;
+            state.error = null;
         },
-
-        logoutSessionStorage: (state) => {
-            state.userInfo = null;
-            sessionStorage.clear();
+        signInSuccess: (state, action) => {
+            state.currentUser = action.payload
+            state.loading = false;
+            state.error = null;
         },
-    },
+        signInFailure: (state, action) => {
+            state.loading = false;
+            state.error = action.payload
+        },
+        updateStart: (state) => {
+            state.loading = true;
+            state.error = null
+        },
+        updateSuccess: (state, action) => {
+            state.currentUser = action.payload;
+            state.loading = false;
+            state.error = null
+        },
+        updateFailure: (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+        deleteUserStart: (state) => {
+            state.loading = true;
+            state.error = null
+        },
+        deleteUserSuccess: (state) => {
+            state.currentUser = null;
+            state.loading = false;
+            state.error = null;
+        },
+        deleteUserFailure: (state, action) => {
+            state.loading = false;
+            state.error = action.payload
+        },
+        signoutStart: (state) => {
+            state.loading = true;
+            state.error = null
+        },
+        signoutSuccess: (state) => {
+            state.currentUser = null;
+            state.loading = false;
+            state.error = null
+        },
+        signoutError: (state, action) => {
+            state.loading = false
+            state.error = action.payload
+        }
+    }
 });
 
-export const { setCredentials, logoutSessionStorage } = authSlice.actions;
+export const {
+    signInStart,
+    signInSuccess,
+    signInFailure,
+    updateStart,
+    updateSuccess,
+    updateFailure,
+    deleteUserStart,
+    deleteUserSuccess,
+    deleteUserFailure,
+    signoutStart,
+    signoutSuccess,
+    signoutError
+} = authSlice.actions
 
-export default authSlice.reducer;
+export default authSlice.reducer

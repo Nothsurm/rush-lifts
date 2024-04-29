@@ -8,12 +8,10 @@ import { Button } from './ui/button'
 import { useLogoutMutation } from '@/redux/api/usersApiSlice'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { logoutLocalStorage } from '@/redux/features/auth/authRememberMeSlice'
-import { logoutSessionStorage } from '@/redux/features/auth/authSlice'
+import { signoutError, signoutStart, signoutSuccess } from '@/redux/features/auth/authSlice'
 
 export default function UsernameMenu() {
     const { userInfo } = useSelector((state: RootState) => state.auth)
-    const { userInfoLocal } = useSelector((state: RootState) => state.authRememberMe)
     const [isLoading, setLoading] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -23,13 +21,14 @@ export default function UsernameMenu() {
     const logoutCurrentUser = async () => {
         setLoading(true)
         try {
-            dispatch(logoutLocalStorage())
-            dispatch(logoutSessionStorage())
+            dispatch(signoutStart())
             await logoutApiCall().unwrap()
             toast.success('Successfully logged out')
             navigate('/')
+            dispatch(signoutSuccess())
             setLoading(false)
-        } catch (error) {
+        } catch (error: any) {
+            dispatch(signoutError(error.message))
             setLoading(false)
         }
     }

@@ -8,7 +8,7 @@ import {
 
 // Redux
 import { Provider } from 'react-redux'
-import store from './redux/store.ts'
+import { persistor, store} from './redux/store.ts'
 
 // Pages
 import ErrorPage from './errorPage.tsx'
@@ -16,6 +16,7 @@ import Home from './pages/Home.tsx'
 import Register from './pages/auth/Register.tsx'
 import { Toaster } from 'sonner'
 import Login from './pages/auth/Login.tsx'
+import { PersistGate } from 'redux-persist/integration/react'
 
 
 const router = createBrowserRouter([
@@ -32,7 +33,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
-    <Toaster visibleToasts={1} position='top-right' richColors/>
-    <RouterProvider router={router} />
+    <PersistGate persistor={persistor} loading={null}>
+      <Toaster visibleToasts={1} position='top-right' richColors/>
+      <RouterProvider router={router} />
+    </PersistGate>
   </Provider>
 )
