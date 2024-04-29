@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { CircleUserRound } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/redux/store'
 import { Separator } from './ui/separator'
 import { Button } from './ui/button'
 import { useLogoutMutation } from '@/redux/api/usersApiSlice'
@@ -11,7 +10,7 @@ import { toast } from 'sonner'
 import { signoutError, signoutStart, signoutSuccess } from '@/redux/features/auth/authSlice'
 
 export default function UsernameMenu() {
-    const { userInfo } = useSelector((state: RootState) => state.auth)
+    const { currentUser } = useSelector((state: any) => state.auth)
     const [isLoading, setLoading] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -37,7 +36,7 @@ export default function UsernameMenu() {
     <DropdownMenu>
         <DropdownMenuTrigger className='flex items-center px-3 font-bold hover:text-blue-500 gap-2'>
             <CircleUserRound className='text-blue-500'/>
-            {userInfo?.email || userInfoLocal?.email}
+            {currentUser.email}
         </DropdownMenuTrigger>
         <DropdownMenuContent>
             <DropdownMenuItem>

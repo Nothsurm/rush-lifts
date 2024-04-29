@@ -13,10 +13,8 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { Link } from "react-router-dom"
-import { Separator } from "./ui/separator"
 import Logo from "./Logo"
 import { useSelector } from "react-redux"
-import { RootState } from "@/redux/store"
 import UsernameMenu from "./UsernameMenu"
  
 const components: { title: string; href: string; description: string }[] = [
@@ -58,8 +56,7 @@ const components: { title: string; href: string; description: string }[] = [
 ]
  
 export function Header() {
-  const { userInfo } = useSelector((state: RootState) => state.auth)
-  const { userInfoLocal } = useSelector((state: RootState) => state.authRememberMe)
+  const { currentUser } = useSelector((state: any) => state.auth)
 
   return (
     <div className="flex flex-row flex-wrap gap-4 justify-around max-w-7xl mx-auto">
@@ -116,7 +113,7 @@ export function Header() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          { userInfo || userInfoLocal ? (
+          { currentUser ? (
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <UsernameMenu />
             </NavigationMenuLink>

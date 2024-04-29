@@ -18,11 +18,12 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
-    reducer: { persistedReducer },
+    reducer: persistedReducer,
 
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false,
+    }),
     devTools: true,
 })
-export type RootState = ReturnType<typeof store.getState>
 
 export const persistor = persistStore(store)
