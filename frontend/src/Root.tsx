@@ -6,7 +6,7 @@ export default function Root() {
   return (
     <>
       <Header />
-      <main className="py-3">
+      <main>
         <Outlet />
       </main>
     </>
