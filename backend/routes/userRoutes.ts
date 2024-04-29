@@ -10,4 +10,6 @@ router.delete('/deleteUser/:id', authenticate, UserController.deleteUser)
 router.post('/loginUser', UserController.loginUser)
 router.post('/logoutUser', UserController.logoutUser)
 
+router.post('/google', UserController.google)
+
 export default router;

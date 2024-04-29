@@ -3,6 +3,7 @@ import asyncHandler from "../middleware/asyncHandler";
 import bcrypt from 'bcryptjs';
 import User from "../models/userModel";
 import createToken from "../utils/createToken";
+import jwt from 'jsonwebtoken';
 
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
@@ -114,10 +115,35 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     res.status(200).json({message: 'logout successfull'})
 })
 
+const google = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const user  = await User.findOne({ email: req.body.email })
+        if (user) {
+            createToken(res, user._id);
+            res.status(200).json({ email: user.email});
+        } else {
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8); // e.g. 0.ghft65365... 16 letter password
+            const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+            const newUser = new User({ 
+                username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4), email: req.body.email, 
+                password: hashedPassword, 
+            })
+            await newUser.save();
+            createToken(res, newUser._id);
+            res.status(200).json({ email: newUser.email })
+        }
+    } catch (error) {
+        res.status(400)
+        throw new Error('Invalid google data')
+    }
+})
+
+
 export default {
     createUser,
     updateUser,
     deleteUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    google
 }

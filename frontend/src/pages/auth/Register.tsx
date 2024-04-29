@@ -20,6 +20,7 @@ import { useRegisterMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
 import { setCredentials } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
+import OAuth from "@/components/OAuth"
 
 const formSchema = z.object({
   username: z.string().min(5, {
@@ -133,17 +134,16 @@ export default function Register() {
             </Button>
           )}
         </form>
+        <OAuth />
+        <Separator className="mt-4"/>
         <div className="flex flex-col gap-4 mt-4">
-          <div className="flex gap-2 text-sm">
+          <div className="flex gap-2 self-center text-sm">
             <p>Already have an account?</p>
             <Link to='/login' className='text-blue-500 hover:underline'>
               Sign In
             </Link>
           </div>
-          <Separator />
-          <Button className='w-full'>
-            Continue with Google
-          </Button>
+          
         </div>
       </Form>
     </div>

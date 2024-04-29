@@ -22,6 +22,7 @@ import { useDispatch } from "react-redux"
 import { setCredentials } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import { setRememberMeCredentials } from "@/redux/features/auth/authRememberMeSlice"
+import OAuth from "@/components/OAuth"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -69,8 +70,6 @@ export default function Register() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      console.log('checked');
-      
       setIsChecked(true)
     } else {
       setIsChecked(false)
@@ -148,17 +147,15 @@ export default function Register() {
             </Button>
           )}
         </form>
+        <OAuth />
+        <Separator className="mt-4"/>
         <div className="flex flex-col gap-4 mt-4">
-          <div className="flex gap-2 text-sm">
+          <div className="flex self-center gap-2 text-sm">
             <p>Don't have an account?</p>
             <Link to='/register' className='text-blue-500 hover:underline'>
               Register
             </Link>
           </div>
-          <Separator />
-          <Button className='w-full'>
-            Continue with Google
-          </Button>
         </div>
       </Form>
     </div>
