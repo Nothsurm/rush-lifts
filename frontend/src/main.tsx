@@ -5,18 +5,21 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom"
+import { Toaster } from 'sonner'
 
 // Redux
 import { Provider } from 'react-redux'
 import { persistor, store} from './redux/store.ts'
+import { PersistGate } from 'redux-persist/integration/react'
 
 // Pages
 import ErrorPage from './errorPage.tsx'
 import Home from './pages/Home.tsx'
 import Register from './pages/auth/Register.tsx'
-import { Toaster } from 'sonner'
 import Login from './pages/auth/Login.tsx'
-import { PersistGate } from 'redux-persist/integration/react'
+import ProtectedRoute from './pages/protected/ProtectedRoute.tsx'
+import Dashboard from './pages/protected/Dashboard.tsx'
+import AuthLandingPage from './pages/AuthLandingPage.tsx'
 
 
 const router = createBrowserRouter([
@@ -26,6 +29,14 @@ const router = createBrowserRouter([
     children: [
       { path: "/register", element: <Register /> },
       { path: "/login", element: <Login /> },
+      
+      {/* PROTECTED ROUTE */},
+      { path: "/authenticated", element: <ProtectedRoute/>,
+        errorElement: <ErrorPage />,
+        children: [
+          { path: "home", element: <AuthLandingPage />}
+        ], 
+      }
     ]
   },
   {

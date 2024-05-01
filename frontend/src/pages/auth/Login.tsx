@@ -56,7 +56,7 @@ export default function Register() {
       }).unwrap()
       dispatch(signInSuccess(res))
       toast.success(`${values.email} Successfully Logged In`)
-      navigate('/')
+      navigate('/authenticated/home')
     } catch (error: any) {
       dispatch(signInFailure(error.message))
       toast.error(`${error.data}`)

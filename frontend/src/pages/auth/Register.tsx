@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useRegisterMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
@@ -37,9 +37,10 @@ const formSchema = z.object({
 export type UserData = z.infer<typeof formSchema>
 
 export default function Register() {
-  const [visible, setVisible] = useState(false)
-  const [register, {isLoading}] = useRegisterMutation()
-  const dispatch = useDispatch()
+  const [visible, setVisible] = useState(false);
+  const [register, {isLoading}] = useRegisterMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const form = useForm<UserData>({
     resolver: zodResolver(formSchema),
@@ -60,6 +61,7 @@ export default function Register() {
       }).unwrap()
       dispatch(signInSuccess(res))
       toast.success(`User ${values.username} Successfully Created`)
+      navigate('/authenticated/home')
     } catch (error: any) {
       dispatch(signInFailure(error.message))
       toast.error(`${error.data}`)
