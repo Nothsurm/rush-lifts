@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
-import { CircleUserRound } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Separator } from './ui/separator'
 import { Button } from './ui/button'
@@ -14,6 +13,8 @@ export default function UsernameMenu() {
     const [isLoading, setLoading] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    console.log(currentUser);
+    
 
     const [logoutApiCall] = useLogoutMutation()
 
@@ -35,7 +36,7 @@ export default function UsernameMenu() {
   return (
     <DropdownMenu>
         <DropdownMenuTrigger className='flex items-center px-3 font-bold hover:text-blue-500 gap-2'>
-            <CircleUserRound className='text-blue-500'/>
+            <img src={currentUser.profilePicture} alt="" className='w-[30px] rounded-md' />
             {currentUser.email}
         </DropdownMenuTrigger>
         <DropdownMenuContent>

@@ -26,7 +26,9 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
         res.status(201)
             .json({
+                username: newUser.username,
                 email: newUser.email, 
+                profilePicture: newUser.profilePicture
             });
     } catch (error) {
         res.status(400)
@@ -40,6 +42,7 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     if (user) {
         user.username = req.body.username || user.username
         user.email = req.body.email || user.email
+        user.profilePicture = req.body.profilePicture || user.profilePicture
 
         if (req.body.password) {
             const salt = await bcrypt.genSalt(10)
@@ -100,7 +103,9 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
             res.status(201)
             .json({ 
+                username: existingUser.username,
                 email: existingUser.email, 
+                profilePicture: existingUser.profilePicture
             });
             return;
         }
@@ -116,21 +121,34 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
 })
 
 const google = asyncHandler(async (req: Request, res: Response) => {
+    const { email, googlePhotoUrl } = req.body
     try {
-        const user  = await User.findOne({ email: req.body.email })
+        const user  = await User.findOne({ email })
         if (user) {
             createToken(res, user._id);
-            res.status(200).json({ email: user.email});
+            res.status(200).
+            json({ 
+                username: user.username,
+                email: user.email,
+                profilePicture: user.profilePicture
+            });
         } else {
             const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8); // e.g. 0.ghft65365... 16 letter password
             const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
             const newUser = new User({ 
-                username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4), email: req.body.email, 
+                username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4), 
+                email,
                 password: hashedPassword, 
+                profilePicture: googlePhotoUrl,
             })
             await newUser.save();
             createToken(res, newUser._id);
-            res.status(200).json({ email: newUser.email })
+            res.status(200)
+            .json({ 
+                username: newUser.username,
+                email: newUser.email,
+                profilePicture: newUser.profilePicture
+            })
         }
     } catch (error) {
         res.status(400)

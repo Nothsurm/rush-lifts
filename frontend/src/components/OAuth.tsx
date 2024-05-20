@@ -19,10 +19,11 @@ export default function OAuth() {
             const result = await signInWithPopup(auth, provider)
             const res = await google({
                 name: result.user.displayName,
-                email: result.user.email
+                email: result.user.email,
+                googlePhotoUrl: result.user.photoURL
             }).unwrap()
             toast.success(`${result.user.email} Successfully Logged In`)
-            navigate('/')
+            navigate('/authenticated/home')
             dispatch(signInSuccess(res))
         } catch (error: any) {
             toast.error(`${error.data}`)

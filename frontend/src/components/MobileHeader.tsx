@@ -15,7 +15,7 @@ export default function MobileHeader() {
             <SheetTitle>
                 {currentUser ? (
                     <span className='flex items-center font-bold gap-2'>
-                        <CircleUserRound className='text-blue-500' />
+                        <img src={currentUser.profilePicture} alt="" className='w-[30px] rounded-md' />
                         {currentUser?.email}
                     </span>
                 ) : (

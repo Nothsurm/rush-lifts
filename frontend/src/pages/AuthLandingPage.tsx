@@ -1,17 +1,27 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Dashboard from "./protected/Dashboard"
+import Profile from "./protected/Profile"
+import Workout from "./protected/Workout"
 
 export default function AuthLandingPage() {
   return (
-    <Tabs className="mt-2">
-        <TabsList className="w-full">
-            <TabsTrigger value="account">Dashboard</TabsTrigger>
-            <TabsTrigger value="password">Profile</TabsTrigger>
-            <TabsTrigger value="password">My Workouts</TabsTrigger>
+    <Tabs className="mt-4">
+        <TabsList className="w-full flex flex-wrap gap-4">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="workout">My Workouts</TabsTrigger>
             <TabsTrigger value="password">Following</TabsTrigger>
             <TabsTrigger value="password">Profile</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">Make changes to your account here.</TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="dashboard">
+          <Dashboard />
+        </TabsContent>
+        <TabsContent value="profile">
+          <Profile />
+        </TabsContent>
+        <TabsContent value="workout">
+          <Workout />
+        </TabsContent>
     </Tabs>
   )
 }
