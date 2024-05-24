@@ -17,11 +17,20 @@ import 'react-circular-progressbar/dist/styles.css';
 
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useDispatch, useSelector } from "react-redux"
-import { updateStart, updateSuccess, updateFailure } from "@/redux/features/auth/authSlice"
+import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserFailure, deleteUserSuccess } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import { app } from "@/firebase"
 import { Label } from "@/components/ui/label"
@@ -30,6 +39,7 @@ export default function Register() {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({})
+  const [showModal, setShowModal] = useState(false)
   const [imageFile, setImageFile] = useState<any>(null)
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null)
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState<any>(null)
@@ -121,6 +131,26 @@ useEffect(() => {
     )
   }
 
+  const handleDeleteUser = async () => {
+    setShowModal(false)
+    try {
+        dispatch(deleteUserStart())
+        const res = await fetch(`/api/users/deleteUser/${currentUser._id}`, {
+            method: 'DELETE'
+        });
+        const data = await res.json()
+        if (!res.ok) {
+            dispatch(deleteUserFailure(data.message))
+            toast.error('Something went wrong, please try again')
+        } else {
+            dispatch(deleteUserSuccess(data))
+            toast.success('Your account has been successfully deleted')
+        }
+    } catch (error: any) {
+        dispatch(deleteUserFailure(error.message))
+    }
+};
+
   return (
     <div className="max-w-96 mx-auto mt-20">
       <form onSubmit={handleSubmit} className="space-y-4 m-1">
@@ -203,7 +233,20 @@ useEffect(() => {
         <Separator className="mt-4"/>
         <div className="flex flex-col gap-4 mt-4 ml-1 mr-1">
           <div className="flex justify-between text-sm text-red-600">
-            <span className="cursor-pointer hover:underline">Delete Account</span>
+            <Dialog>
+              <DialogTrigger><span className="cursor-pointer hover:underline">Delete Account</span></DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete your account
+                    and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <Separator />
+                <Button onClick={handleDeleteUser}>Delete Account</Button>
+              </DialogContent>
+            </Dialog>
             <span className="cursor-pointer hover:underline">Sign Out</span>
           </div>
       </div>

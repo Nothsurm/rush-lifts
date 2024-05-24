@@ -58,8 +58,8 @@ export default function Register() {
       toast.success(`${values.email} Successfully Logged In`)
       navigate('/authenticated/home')
     } catch (error: any) {
-      dispatch(signInFailure(error.message))
-      toast.error(`${error.data}`)
+      dispatch(signInFailure(error.data.message))
+      toast.error(`${error.data.message}`)
     }
   };
 
