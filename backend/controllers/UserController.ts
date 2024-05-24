@@ -26,6 +26,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
         res.status(201)
             .json({
+                _id: newUser._id,
                 username: newUser.username,
                 email: newUser.email, 
                 profilePicture: newUser.profilePicture
@@ -38,24 +39,36 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
 const updateUser = asyncHandler(async (req: Request, res: Response) => {
     const user = await User.findById(req.params.id)
+    const { username, email, password, profilePicture } = req.body
 
     if (user) {
-        user.username = req.body.username || user.username
-        user.email = req.body.email || user.email
-        user.profilePicture = req.body.profilePicture || user.profilePicture
+        if (username) {
+            if (username.length <= 5 || username.length >= 20) {
+                throw new Error('Username must be between 6 and 20 characters')
+            }
+        }
+        user.username = username || user.username
+        user.email = email || user.email
+        user.profilePicture = profilePicture || user.profilePicture
 
-        if (req.body.password) {
+        if (password) {
+            if (password.length <= 5) {
+                throw new Error('Password must be at least 6 characters long')
+            }
             const salt = await bcrypt.genSalt(10)
-            const hashedPassword = await bcrypt.hash(req.body.password, salt)
+            const hashedPassword = await bcrypt.hash(password, salt)
             user.password = hashedPassword;
         }
+
+        const userExists = await User.findOne({email})
+        if (userExists) res.status(400).json({ message: 'Email already exists'})
 
         const updatedUser = await user.save()
         res.json ({
             _id: updatedUser._id,
             username: updatedUser.username,
-            email: updatedUser.email,
-            isAdmin: updatedUser.isAdmin,         
+            profilePicture: updatedUser.profilePicture,
+            email: updatedUser.email,       
         })
     } else {
         res.status(404)
@@ -103,6 +116,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
             res.status(201)
             .json({ 
+                _id: existingUser._id,
                 username: existingUser.username,
                 email: existingUser.email, 
                 profilePicture: existingUser.profilePicture
@@ -128,6 +142,7 @@ const google = asyncHandler(async (req: Request, res: Response) => {
             createToken(res, user._id);
             res.status(200).
             json({ 
+                _id: user._id,
                 username: user.username,
                 email: user.email,
                 profilePicture: user.profilePicture
@@ -145,6 +160,7 @@ const google = asyncHandler(async (req: Request, res: Response) => {
             createToken(res, newUser._id);
             res.status(200)
             .json({ 
+                _id: newUser._id,
                 username: newUser.username,
                 email: newUser.email,
                 profilePicture: newUser.profilePicture
