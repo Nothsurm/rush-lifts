@@ -30,10 +30,11 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useDispatch, useSelector } from "react-redux"
-import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserFailure, deleteUserSuccess } from "@/redux/features/auth/authSlice"
+import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserFailure, deleteUserSuccess, signoutStart, signoutSuccess, signoutError } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import { app } from "@/firebase"
 import { Label } from "@/components/ui/label"
+import { useLogoutMutation } from "@/redux/api/usersApiSlice"
 
 export default function Register() {
   const [visible, setVisible] = useState(false)
@@ -49,6 +50,8 @@ export default function Register() {
   const navigate = useNavigate()
 
   const { currentUser } = useSelector((state: any) => state.auth)
+
+  const [logout] = useLogoutMutation()
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
@@ -151,6 +154,18 @@ useEffect(() => {
     }
 };
 
+const handleSignOut = async () => {
+  signoutStart()
+  try {
+    await logout().unwrap()
+    dispatch(signoutSuccess())
+    toast.success('You have been successfully logged out')
+  } catch (error: any) {
+    dispatch(signoutError(error.message))
+    toast.error('Something went wrong')
+  }
+}
+
   return (
     <div className="max-w-96 mx-auto mt-20">
       <form onSubmit={handleSubmit} className="space-y-4 m-1">
@@ -247,7 +262,7 @@ useEffect(() => {
                 <Button onClick={handleDeleteUser}>Delete Account</Button>
               </DialogContent>
             </Dialog>
-            <span className="cursor-pointer hover:underline">Sign Out</span>
+            <span className="cursor-pointer hover:underline" onClick={handleSignOut}>Sign Out</span>
           </div>
       </div>
     </div>
