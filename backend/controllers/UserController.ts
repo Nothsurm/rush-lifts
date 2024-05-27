@@ -196,7 +196,7 @@ const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
             from: process.env.NODEMAILER_EMAIL,
             to: email,
             subject: 'Reset Password',
-            text: 'Please clink the link below to reset your password, this link will expire in 10 minutes ' + `https://rushton-properties.onrender.com/resetPassword/${token}`
+            text: 'Please clink the link below to reset your password, this link will expire in 10 minutes ' + `http://localhost:5173/resetPassword/${token}`
           };
 
           transporter.sendMail(mailOptions, function(error, info){
@@ -207,7 +207,7 @@ const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
             }
         });
     } catch (error) {
-        throw new Error('This Email has not been registered')
+        return res.json({ success: false, message: 'This Email has not been registered'})
     }
 })
 
@@ -219,15 +219,23 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     const {token} = req.params;
     const {password} = req.body
 
+    if (password === '') {
+        return res.json({ success: false, message: 'Please enter a password'})
+    }
+    if (password) {
+        if (password.length <= 5) {
+            return res.json({ success: false, message: 'Password must be at least 6 characters long'})
+        }
+    }
+
     try {
         const decoded = await jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
         const id = decoded.id;
         const hashedPassword = await bcrypt.hash(password, 10)
         await User.findByIdAndUpdate({_id: id}, {password: hashedPassword})
         return res.json({ status: true, message: "Updated Password Successfully"})
-
     } catch (error) {
-        throw new Error('Invalid token!')
+        return res.json({ success: false, message: 'Your session has expired'})
     }
 })
 

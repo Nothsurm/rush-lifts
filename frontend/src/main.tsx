@@ -21,6 +21,7 @@ import ProtectedRoute from './pages/protected/ProtectedRoute.tsx'
 import Dashboard from './pages/protected/Dashboard.tsx'
 import AuthLandingPage from './pages/AuthLandingPage.tsx'
 import ForgotPassword from './pages/auth/ForgotPassword.tsx'
+import ResetPassword from './pages/auth/ResetPassword.tsx'
 
 
 const router = createBrowserRouter([
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: "/register", element: <Register /> },
       { path: "/login", element: <Login /> },
       { path: "/forgotPassword", element: <ForgotPassword /> },
+      { path: "/resetPassword/:token", element: <ResetPassword /> },
       
       {/* PROTECTED ROUTE */},
       { path: "/authenticated", element: <ProtectedRoute/>,
