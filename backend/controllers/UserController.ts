@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import User from "../models/userModel";
 import createToken from "../utils/createToken";
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer'
 
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
@@ -170,6 +171,63 @@ const google = asyncHandler(async (req: Request, res: Response) => {
         res.status(400)
         throw new Error('Invalid google data')
     }
+});
+
+const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
+    const {email} = req.body
+
+    try {
+        const user = await User.findOne({email})
+        if (!user) {
+            throw new Error("User hasn't been registered")
+        }
+
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET as string, {expiresIn: '10m'})
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: process.env.NODEMAILER_EMAIL,
+              pass: process.env.NODEMAILER_PASS,
+            },
+          });
+        
+          async function main() {
+            const info = await transporter.sendMail({
+              from: process.env.NODEMAILER_EMAIL, // sender address
+              to: email, // list of receivers
+              subject: "Reset Password", // Subject line
+              text: 'Please clink the link below to reset your password, this link will expire in 10 minutes ' + `http://localhost:5173/resetPassword/${token}`, // plain text body
+            });
+          
+            console.log("Message sent: %s", info.messageId);
+            // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+          }
+          
+          main().catch(console.error);
+    } catch (error) {
+        throw new Error('Something went wrong')
+    }
+})
+
+interface JwtPayload {
+    id: string
+  }
+
+const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+    const {token} = req.params;
+    const {password} = req.body
+
+    try {
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
+        const id = decoded.id;
+        const hashedPassword = await bcrypt.hash(password, 10)
+        await User.findByIdAndUpdate({_id: id}, {password: hashedPassword})
+        return res.json({ status: true, message: "Updated Password Successfully"})
+
+    } catch (error) {
+        throw new Error('Invalid token!')
+    }
 })
 
 
@@ -179,5 +237,7 @@ export default {
     deleteUser,
     loginUser,
     logoutUser,
-    google
+    google,
+    forgotPassword,
+    resetPassword
 }

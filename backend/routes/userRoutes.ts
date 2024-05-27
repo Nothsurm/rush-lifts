@@ -9,6 +9,8 @@ router.put('/updateUser/:id', authenticate, UserController.updateUser)
 router.delete('/deleteUser/:id', authenticate, UserController.deleteUser)
 router.post('/loginUser', UserController.loginUser)
 router.post('/logoutUser', UserController.logoutUser)
+router.post('/forgotPassword', UserController.forgotPassword)
+router.post('/resetPassword/:token', UserController.resetPassword)
 
 router.post('/google', UserController.google)
 
