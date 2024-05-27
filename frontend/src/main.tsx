@@ -20,6 +20,7 @@ import Login from './pages/auth/Login.tsx'
 import ProtectedRoute from './pages/protected/ProtectedRoute.tsx'
 import Dashboard from './pages/protected/Dashboard.tsx'
 import AuthLandingPage from './pages/AuthLandingPage.tsx'
+import ForgotPassword from './pages/auth/ForgotPassword.tsx'
 
 
 const router = createBrowserRouter([
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/register", element: <Register /> },
       { path: "/login", element: <Login /> },
+      { path: "/forgotPassword", element: <ForgotPassword /> },
       
       {/* PROTECTED ROUTE */},
       { path: "/authenticated", element: <ProtectedRoute/>,

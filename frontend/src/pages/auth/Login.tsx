@@ -131,11 +131,17 @@ export default function Register() {
         </form>
         <OAuth />
         <Separator className="mt-4"/>
-        <div className="flex flex-col gap-4 mt-4">
+        <div className="flex flex-col gap-2 mt-4">
           <div className="flex self-center gap-2 text-sm">
             <p>Don't have an account?</p>
             <Link to='/register' className='text-blue-500 hover:underline'>
               Register
+            </Link>
+          </div>
+          <div className="flex self-center gap-2 text-sm">
+            <p>Forgot Password?</p>
+            <Link to='/forgotPassword' className='text-blue-500 hover:underline'>
+              Click Here
             </Link>
           </div>
         </div>

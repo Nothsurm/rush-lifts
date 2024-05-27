@@ -191,22 +191,23 @@ const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
               pass: process.env.NODEMAILER_PASS,
             },
           });
-        
-          async function main() {
-            const info = await transporter.sendMail({
-              from: process.env.NODEMAILER_EMAIL, // sender address
-              to: email, // list of receivers
-              subject: "Reset Password", // Subject line
-              text: 'Please clink the link below to reset your password, this link will expire in 10 minutes ' + `http://localhost:5173/resetPassword/${token}`, // plain text body
-            });
-          
-            console.log("Message sent: %s", info.messageId);
-            // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-          }
-          
-          main().catch(console.error);
+
+          let mailOptions = {
+            from: process.env.NODEMAILER_EMAIL,
+            to: email,
+            subject: 'Reset Password',
+            text: 'Please clink the link below to reset your password, this link will expire in 10 minutes ' + `https://rushton-properties.onrender.com/resetPassword/${token}`
+          };
+
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                return res.json({ message: 'error sending Email'})
+            } else {
+                return res.json({ success: true, message: 'Email Sent'})
+            }
+        });
     } catch (error) {
-        throw new Error('Something went wrong')
+        throw new Error('This Email has not been registered')
     }
 })
 
