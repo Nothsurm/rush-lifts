@@ -263,29 +263,29 @@ const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     const { otp, userId } = req.body
 
     if (!userId || !otp.trim()) {
-        throw new Error('Invalid request, missing parameters')
+        return res.json({ success: false, message: 'Please enter a valid email address'})
     }
 
     if(!isValidObjectId(userId)) {
-        throw new Error('Invalid user')
+        return res.json({ success: false, message: 'Invalid User'})
     }
 
     const user = await User.findById(userId)
     if (!user) {
-        throw new Error('User not found')
+        return res.json({ success: false, message: 'User not found'})
     }
     if (user.verified) {
-        throw new Error('This User is already verified')
+        return res.json({ success: false, message: 'This User is already verified'})
     }
 
     const token = await VerifyToken.findOne({owner: user._id})
     if (!token) {
-        throw new Error('User not found')
+        return res.json({ success: false, message: 'User not found'})
     }
 
     const isMatched = await token.compareToken(otp)
     if (!isMatched) {
-        throw new Error('Please provide a valid token')
+        return res.json({ success: false, message: 'Please provide a valid token'})
     }
 
     user.verified = true;
@@ -301,24 +301,23 @@ const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
             message: `Your Email Verified Successfully`
         });
 
-        res.status(200).json({message: 'Email successfully verified'})
+        res.status(200).json({ success: true, message: 'Email successfully verified'})
     } catch (error) {
         res.status(404)
-        throw new Error('Something went wrong')
+        return res.json({ success: false, message: 'Something went wrong'})
     }
 })
 
 const resendEmail = asyncHandler(async (req: Request, res: Response) => {
     const { email } = req.body
     
-
     const user = await User.findOne({email})
         if (!user) {
-            throw new Error("User hasn't been registered")
+            return res.json({ success: false, message: "This Email hasn't been registered"})
         }
 
         if (user.verified) {
-            throw new Error('This User is already verified')
+            return res.json({ success: false, message: 'This User is already verified'})
         }
     const token = await VerifyToken.findOne({owner: user._id})
     await VerifyToken.findByIdAndDelete(token?._id)
@@ -337,10 +336,10 @@ const resendEmail = asyncHandler(async (req: Request, res: Response) => {
             message: `${OTP}`,
         })
 
-        res.status(200).json({message: 'OTP password successfully sent'})
+        res.status(200).json({ success: true, message: 'OTP password successfully sent'})
     } catch (error) {
         res.status(400)
-        throw new Error('Invalid user data')
+        return res.json({ success: false, message: 'Invalid user data'})
     }
 })
 

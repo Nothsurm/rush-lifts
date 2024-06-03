@@ -59,7 +59,7 @@ export default function Register() {
         email: values.email,
         password: values.password
       }).unwrap()
-      toast.success(`User ${values.username} Successfully Created`)
+      toast.success(`Please verify your email by entering the 4 digit code sent to ${values.email}`)
       navigate('/verifyEmail')
     } catch (error: any) {
       dispatch(registerFailure(error.message))

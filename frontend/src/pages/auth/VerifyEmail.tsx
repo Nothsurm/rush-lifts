@@ -7,10 +7,54 @@ import {
   } from "@/components/ui/input-otp"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 export default function VerifyEmail() {
     const [value, setValue] = useState("")
+    const [email, setEmail] = useState({})
+    const [loading, setLoading] = useState(false)
     const [openModal, setOpenModal] = useState(false)
+
+    const navigate = useNavigate()
+
+    console.log(email);
+    
+
+    const handleChange = (e: any) => {
+        setEmail({
+            ...email,
+            [e.target.id]: e.target.value
+        })
+    }
+
+    const handleSendEmail = async (e: any) => {
+        e.preventDefault()
+        setLoading(true)
+        if (email === "") {
+            toast.error("Please use a valid email address")
+        }
+        try {
+            const res = await fetch(`/api/users/resend-email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(email)
+            });
+            const data = await res.json()
+            if (data.success === false) {
+                toast.error(data.message)
+                setLoading(false)
+                return;
+            } else {
+                setLoading(false)
+                toast.success(`A 4 digit password has been re-sent to your email address`)
+            }
+        } catch (error) {
+            
+        }
+    }
 
   return (
     <div className="flex justify-center mt-20">
@@ -41,8 +85,23 @@ export default function VerifyEmail() {
                         id="email"
                         type='email'
                         className="w-[200px] sm:w-[300px]" 
+                        onChange={handleChange}
                     />
-                    <Button className="w-full mt-2">Send</Button>
+                    {loading ? (
+                        <Button 
+                            className="w-full mt-2"
+                            disabled={loading}
+                        >
+                            Sending...
+                        </Button>
+                    ): (
+                        <Button 
+                            className="w-full mt-2"
+                            onClick={handleSendEmail}
+                        >
+                            Send
+                        </Button>
+                    )}
                 </div>
                 
             ) : (
