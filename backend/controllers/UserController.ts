@@ -5,6 +5,9 @@ import User from "../models/userModel";
 import createToken from "../utils/createToken";
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer'
+import { generateOTP, sendEmail } from "../utils/email";
+import VerifyToken from "../models/verifyTokenModel";
+import { isValidObjectId } from "mongoose";
 
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
@@ -19,11 +22,28 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
-    const newUser = new User({ username, email, password: hashedPassword })
+    const newUser = new User({ 
+        username, 
+        email, 
+        password: hashedPassword 
+    })
+
+    const OTP = generateOTP()
+    const verificationToken = new VerifyToken({
+        owner: newUser._id,
+        token: OTP
+    })
 
     try {
+        await verificationToken.save()
         await newUser.save()
         createToken(res, newUser._id);
+
+        await sendEmail({
+            email: newUser.email,
+            subject: 'Verify your email account',
+            message: `${OTP}`,
+        })
 
         res.status(201)
             .json({
@@ -239,6 +259,55 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     }
 })
 
+const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+    const { otp, userId } = req.body
+
+    if (!userId || !otp.trim()) {
+        throw new Error('Invalid request, missing parameters')
+    }
+
+    if(!isValidObjectId(userId)) {
+        throw new Error('Invalid user')
+    }
+
+    const user = await User.findById(userId)
+    if (!user) {
+        throw new Error('User not found')
+    }
+    if (user.verified) {
+        throw new Error('This User is already verified')
+    }
+
+    const token = await VerifyToken.findOne({owner: user._id})
+    if (!token) {
+        throw new Error('User not found')
+    }
+
+    const isMatched = await token.compareToken(otp)
+    if (!isMatched) {
+        throw new Error('Please provide a valid token')
+    }
+
+    user.verified = true;
+    
+    try {
+        await VerifyToken.findByIdAndDelete(token._id)
+        await user.save()
+
+        await sendEmail({
+            from: 'emailverification@email.com',
+            email: user.email,
+            subject: 'Email verified successfully',
+            message: `Your Email Verified Successfully`
+        });
+
+        res.status(200).json({message: 'Email successfully verified'})
+    } catch (error) {
+        res.status(404)
+        throw new Error('Something went wrong')
+    }
+})
+
 
 export default {
     createUser,
@@ -248,5 +317,6 @@ export default {
     logoutUser,
     google,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    verifyEmail
 }
