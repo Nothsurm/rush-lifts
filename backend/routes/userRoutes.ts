@@ -12,6 +12,8 @@ router.post('/logoutUser', UserController.logoutUser)
 router.post('/forgotPassword', UserController.forgotPassword)
 router.post('/resetPassword/:token', UserController.resetPassword)
 router.post('/verify-email', UserController.verifyEmail)
+router.post('/resend-email', UserController.resendEmail)
+
 
 router.post('/google', UserController.google)
 

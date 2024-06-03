@@ -308,6 +308,42 @@ const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
     }
 })
 
+const resendEmail = asyncHandler(async (req: Request, res: Response) => {
+    const { email } = req.body
+    
+
+    const user = await User.findOne({email})
+        if (!user) {
+            throw new Error("User hasn't been registered")
+        }
+
+        if (user.verified) {
+            throw new Error('This User is already verified')
+        }
+    const token = await VerifyToken.findOne({owner: user._id})
+    await VerifyToken.findByIdAndDelete(token?._id)
+
+    try {
+        const OTP = generateOTP()
+        const verificationToken = new VerifyToken({
+            owner: user._id,
+            token: OTP
+        })
+
+        await verificationToken.save()
+        await sendEmail({
+            email: user.email,
+            subject: 'Verify your email account',
+            message: `${OTP}`,
+        })
+
+        res.status(200).json({message: 'OTP password successfully sent'})
+    } catch (error) {
+        res.status(400)
+        throw new Error('Invalid user data')
+    }
+})
+
 
 export default {
     createUser,
@@ -318,5 +354,6 @@ export default {
     google,
     forgotPassword,
     resetPassword,
-    verifyEmail
+    verifyEmail,
+    resendEmail
 }
