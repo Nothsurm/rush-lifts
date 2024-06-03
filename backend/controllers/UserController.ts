@@ -50,7 +50,8 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
                 _id: newUser._id,
                 username: newUser.username,
                 email: newUser.email, 
-                profilePicture: newUser.profilePicture
+                profilePicture: newUser.profilePicture,
+                verified: newUser.verified
             });
     } catch (error) {
         res.status(400)
@@ -89,7 +90,8 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
             _id: updatedUser._id,
             username: updatedUser.username,
             profilePicture: updatedUser.profilePicture,
-            email: updatedUser.email,       
+            email: updatedUser.email,     
+            verified: updatedUser.verified  
         })
     } else {
         res.status(404)
@@ -140,7 +142,8 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
                 _id: existingUser._id,
                 username: existingUser.username,
                 email: existingUser.email, 
-                profilePicture: existingUser.profilePicture
+                profilePicture: existingUser.profilePicture,
+                verified: existingUser.verified
             });
             return;
         }
@@ -184,7 +187,8 @@ const google = asyncHandler(async (req: Request, res: Response) => {
                 _id: newUser._id,
                 username: newUser.username,
                 email: newUser.email,
-                profilePicture: newUser.profilePicture
+                profilePicture: newUser.profilePicture,
+                verified: newUser.verified
             })
         }
     } catch (error) {
@@ -260,31 +264,31 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 })
 
 const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
-    const { otp, userId } = req.body
+    const { otp } = req.body
 
-    if (!userId || !otp.trim()) {
-        return res.json({ success: false, message: 'Please enter a valid email address'})
-    }
-
-    if(!isValidObjectId(userId)) {
+    const user = await User.findById(req.params.id)
+    if(!isValidObjectId(user)) {
+        res.status(404)
         return res.json({ success: false, message: 'Invalid User'})
     }
-
-    const user = await User.findById(userId)
     if (!user) {
+        res.status(404)
         return res.json({ success: false, message: 'User not found'})
     }
     if (user.verified) {
+        res.status(404)
         return res.json({ success: false, message: 'This User is already verified'})
     }
 
     const token = await VerifyToken.findOne({owner: user._id})
     if (!token) {
-        return res.json({ success: false, message: 'User not found'})
+        res.status(404)
+        return res.json({ success: false, message: 'Token not found'})
     }
 
     const isMatched = await token.compareToken(otp)
     if (!isMatched) {
+        res.status(404)
         return res.json({ success: false, message: 'Please provide a valid token'})
     }
 
@@ -301,7 +305,9 @@ const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
             message: `Your Email Verified Successfully`
         });
 
-        res.status(200).json({ success: true, message: 'Email successfully verified'})
+        res.status(200).json({ 
+            success: true, message: `${user.email} successfully verified`
+        })
     } catch (error) {
         res.status(404)
         return res.json({ success: false, message: 'Something went wrong'})

@@ -15,10 +15,14 @@ const authSlice = createSlice({
             state.loading = true;
             state.error = null;
         },
-        registerSuccess: (state, action) => {
+        registerPending: (state, action) => {
             state.loading = false;
             state.error = null;
             state.currentUser = action.payload
+        },
+        registerSuccess: (state) => {
+            state.loading = false;
+            state.error = null;
             state.verified = true;
         },
         registerFailure: (state, action) => {
@@ -83,6 +87,7 @@ const authSlice = createSlice({
 export const {
     registerStart,
     registerSuccess,
+    registerPending,
     registerFailure,
     signInStart,
     signInSuccess,

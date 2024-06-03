@@ -18,7 +18,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useRegisterMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
-import { registerStart, registerFailure } from "@/redux/features/auth/authSlice"
+import { registerStart, registerFailure, registerPending } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import OAuth from "@/components/OAuth"
 
@@ -54,11 +54,12 @@ export default function Register() {
   async function onSubmit(values: UserData) {
     try {
       dispatch(registerStart())
-      await register({
+      const res = await register({
         username: values.username,
         email: values.email,
         password: values.password
       }).unwrap()
+      dispatch(registerPending(res))
       toast.success(`Please verify your email by entering the 4 digit code sent to ${values.email}`)
       navigate('/verifyEmail')
     } catch (error: any) {
