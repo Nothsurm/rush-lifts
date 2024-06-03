@@ -22,6 +22,7 @@ import Dashboard from './pages/protected/Dashboard.tsx'
 import AuthLandingPage from './pages/AuthLandingPage.tsx'
 import ForgotPassword from './pages/auth/ForgotPassword.tsx'
 import ResetPassword from './pages/auth/ResetPassword.tsx'
+import VerifyEmail from './pages/auth/VerifyEmail.tsx'
 
 
 const router = createBrowserRouter([
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/forgotPassword", element: <ForgotPassword /> },
       { path: "/resetPassword/:token", element: <ResetPassword /> },
+      { path: "/verifyEmail", element: <VerifyEmail /> },
       
       {/* PROTECTED ROUTE */},
       { path: "/authenticated", element: <ProtectedRoute/>,

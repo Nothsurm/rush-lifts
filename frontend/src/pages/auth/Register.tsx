@@ -18,7 +18,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useRegisterMutation } from "@/redux/api/usersApiSlice"
 import { useDispatch } from "react-redux"
-import { signInStart, signInSuccess, signInFailure } from "@/redux/features/auth/authSlice"
+import { registerStart, registerFailure } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import OAuth from "@/components/OAuth"
 
@@ -53,17 +53,16 @@ export default function Register() {
 
   async function onSubmit(values: UserData) {
     try {
-      dispatch(signInStart())
-      const res = await register({
+      dispatch(registerStart())
+      await register({
         username: values.username,
         email: values.email,
         password: values.password
       }).unwrap()
-      dispatch(signInSuccess(res))
       toast.success(`User ${values.username} Successfully Created`)
-      navigate('/authenticated/home')
+      navigate('/verifyEmail')
     } catch (error: any) {
-      dispatch(signInFailure(error.message))
+      dispatch(registerFailure(error.message))
       toast.error(`${error.data}`)
     }
   }
