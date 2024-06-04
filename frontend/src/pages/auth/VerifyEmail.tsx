@@ -100,8 +100,8 @@ export default function VerifyEmail() {
             } else {
                 setLoading(false)
                 dispatch(registerSuccess())
-                toast.success('Email successfully verified')
-                navigate('/authenticated/home')
+                toast.success('Email successfully verified, please login')
+                navigate('/login')
             }
         } catch (error: any) {
             setLoading(false);

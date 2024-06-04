@@ -4,7 +4,6 @@ const initialState = {
     currentUser: null,
     error: null,
     loading: false,
-    verified: false,
 }
 
 const authSlice = createSlice({
@@ -23,7 +22,6 @@ const authSlice = createSlice({
         registerSuccess: (state) => {
             state.loading = false;
             state.error = null;
-            state.verified = true;
         },
         registerFailure: (state, action) => {
             state.loading = false;

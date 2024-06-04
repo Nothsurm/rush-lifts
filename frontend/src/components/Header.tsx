@@ -116,7 +116,7 @@ export function Header() {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              { currentUser ? (
+              { currentUser?.verified ? (
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <UsernameMenu />
                 </NavigationMenuLink>

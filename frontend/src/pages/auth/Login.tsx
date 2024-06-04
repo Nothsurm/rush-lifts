@@ -17,7 +17,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
 import { useLoginMutation } from "@/redux/api/usersApiSlice"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { signInStart, signInSuccess, signInFailure } from "@/redux/features/auth/authSlice"
 import { toast } from "sonner"
 import OAuth from "@/components/OAuth"
@@ -39,6 +39,8 @@ export default function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const { currentUser } = useSelector((state: any) => state.auth)
+  
   const form = useForm<UserData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -58,6 +60,8 @@ export default function Register() {
       toast.success(`${values.email} Successfully Logged In`)
       navigate('/authenticated/home')
     } catch (error: any) {
+      console.log(error);
+      
       dispatch(signInFailure(error.data.message))
       toast.error(`${error.data.message}`)
     }
