@@ -112,7 +112,7 @@ export default function Register() {
                   <div className="flex items-center gap-2">
                     <Input 
                       type={visible ? 'text' : 'password'}
-                      placeholder='*******' 
+                      placeholder={visible ? 'Password' : '********'} 
                       {...field} 
                     />
                     <button type='button' onClick={() => setVisible(!visible)}>

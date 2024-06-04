@@ -40,6 +40,9 @@ export default function Register() {
   const navigate = useNavigate()
 
   const { currentUser } = useSelector((state: any) => state.auth)
+
+  console.log(currentUser);
+  
   
   const form = useForm<UserData>({
     resolver: zodResolver(formSchema),
@@ -66,14 +69,6 @@ export default function Register() {
       toast.error(`${error.data.message}`)
     }
   };
-
-  /*const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setIsChecked(true)
-    } else {
-      setIsChecked(false)
-    }
-  };*/
 
   return (
     <div className="max-w-64 mx-auto mt-20">
@@ -107,7 +102,7 @@ export default function Register() {
                   <div className="flex items-center gap-2">
                     <Input 
                       type={visible ? 'text' : 'password'}
-                      placeholder='*******' 
+                      placeholder={visible ? 'Password' : '********'}
                       {...field} 
                     />
                     <button type='button' onClick={() => setVisible(!visible)}>

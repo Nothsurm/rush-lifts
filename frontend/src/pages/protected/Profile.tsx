@@ -224,7 +224,7 @@ const handleSignOut = async () => {
           <Input 
             id="password"
             type={visible ? 'text' : 'password'} 
-            placeholder='*******'
+            placeholder={visible ? 'Password' : '********'}
             onChange={handleChange}
           />
           <button type='button' onClick={() => setVisible(!visible)}>
