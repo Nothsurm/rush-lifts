@@ -39,16 +39,22 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Label } from "./ui/label";
+import { toast } from "sonner";
 
 
 export default function WorkoutModal() {
     const [date, setDate] = useState<Date>()
-    const [val, setVal] = useState<any>([])
+    const [formData, setFormData] = useState<any>('')
+    const [loading, setLoading] = useState(false)
   
+    console.log(formData);
+
     console.log(date);
     
+    
+    
   
-    const handleAdd = () => {
+    /*const handleAdd = () => {
         const abc = [...val, []]
         setVal(abc)
     }
@@ -57,13 +63,40 @@ export default function WorkoutModal() {
         const deleteVal = [...val]
         deleteVal.splice(0,1)
         setVal(deleteVal)
-    }
+    }*/
   
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault()
-        console.log('submitted');
+        setLoading(true)
+        try {
+            const result = await fetch('/api/workouts/createWorkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    },
+                body: JSON.stringify(formData)
+            });
+            const data = await result.json()
+            if (data.success === false) {
+                toast.error(data.message);
+                setLoading(false);
+                return;
+            } else {
+                setLoading(false)
+                toast.success(data.message)
+            }
+        } catch (error: any) {
+            toast.error(error.message)
+        }
         
     }
+
+    const handleChange = (e: any) => {
+        setFormData({
+            ...formData, [e.target.id]: e.target.value
+        })
+    }
+
 
   return (
     <div>
@@ -77,61 +110,53 @@ export default function WorkoutModal() {
             <DialogHeader>
               <DialogTitle>Add a New Workout</DialogTitle>
             </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                            >
-                                <FaRegCalendarAlt className="mr-2 h-4 w-4" />
-                                {date ? format(date, "PPP") : <span>Pick a date</span>}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            initialFocus
-                            />
-                        </PopoverContent>
-                    </Popover>
-                    <div className="flex flex-row justify-between">
-                        <div className="flex flex-col gap-2">
-                            <Label>Category:</Label>
-                            <Input placeholder="Powerlifting" />
-                        </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex flex-row justify-between items-center">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                >
+                                    <FaRegCalendarAlt className="mr-2 h-4 w-4" />
+                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                mode="single"
+                                selected={date}
+                                onSelect={setDate}
+                                initialFocus
+                                id="date"
+                                />
+                            </PopoverContent>
+                        </Popover>
                         <div className="flex flex-col gap-2">
                             <Label>Exercise:</Label>
-                            <Input placeholder="Squats"/>
+                            <Input 
+                                placeholder="Squats"
+                                id="exercise"
+                                onChange={handleChange}
+                            />
                         </div>
                     </div>
                     <div className="flex flex-row justify-between">
                         <div className="flex flex-col gap-2">
-                            <Label>Weight:</Label>
-                            <div className="flex flex-row gap-2">
-                                <Input 
-                                    placeholder="150"  
-                                    className="w-[80px]"
-                                />
-                                <Select>
-                                    <SelectTrigger className="w-[80px]">
-                                        <SelectValue placeholder="KG" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                        <SelectItem value="KG">KG</SelectItem>
-                                        <SelectItem value="LBS">LBS</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                            <Label>Weight(KG):</Label>
+                            <Input 
+                                placeholder="150"  
+                                className="w-[80px]"
+                                id="weight"
+                                onChange={handleChange}
+                            />
                         </div>
                         <div className="flex flex-col gap-2">
                             <Label>Sets:</Label>
                             <Input 
                                 placeholder="5" 
                                 className="w-[60px]"
+                                id="sets"
+                                onChange={handleChange}
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -139,59 +164,21 @@ export default function WorkoutModal() {
                             <Input 
                                 placeholder="10" 
                                 className="w-[60px]"
+                                id="reps"
+                                onChange={handleChange}
                             />
                         </div>
-                    </div>
-                    {val.map(() => {
-                    return (
-                        <div className="flex flex-row justify-between">
-                            <div className="flex flex-row gap-2">
-                                <Input 
-                                    placeholder="150" 
-                                    className="w-[80px]"
-                                />
-                                <Select>
-                                    <SelectTrigger className="w-[80px]">
-                                        <SelectValue placeholder="KG" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="KG">KG</SelectItem>
-                                            <SelectItem value="LBS">LBS</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <Input 
-                                placeholder="5" 
-                                className="w-[60px]"
-                            />
-                            <Input 
-                                placeholder="10" 
-                                className="w-[60px]"
-                            />
-                        </div>
-                        )
-                    })}
-                    <div className="flex flex-row justify-around">
-                        <Button onClick={() => handleAdd()} className="text-sm">
-                            <div className="flex flex-row items-center gap-2">
-                                <p>Add</p>
-                                <span className="text-lg cursor-pointer">+</span>
-                            </div>
-                        </Button>
-                        <Button onClick={() => handleRemove()} className="text-sm">
-                            <div className="flex flex-row items-center gap-2">
-                                <p>Remove</p>
-                                <span className="text-lg cursor-pointer">-</span>
-                            </div>
-                        </Button>
                     </div>
                     <Button 
                         type="submit"
                         className="bg-blue-500 hover:bg-blue-600 mt-10"
+                        disabled={loading}
                     >
-                        Add Workout
+                        {loading ? (
+                            <p>Adding Workout...</p>
+                        ) : (
+                            <p>Add Workout</p>
+                        )}
                     </Button>
                 </form>
             </DialogContent>

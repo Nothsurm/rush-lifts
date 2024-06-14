@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const commentSchema = new mongoose.Schema({
     rating: {
         type: Number,
-        required: true
+        required: false
     },
     comment: {
         type: String,
-        required: true
+        required: false
     }
 }, {timestamps: true})
 
@@ -16,16 +16,12 @@ const workoutSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    name: {
+    exercise: {
         type: String,
         required: true
     },
-    workoutType: {
-        type: String,
-        required: true
-    },
-    workout: {
-        type: String,
+    weight: {
+        type: Number,
         required: true
     },
     sets: {
