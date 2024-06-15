@@ -4,7 +4,15 @@ import Workout from "../models/workoutModel";
 
 const createWorkout = asyncHandler(async (req: Request, res: Response) => {
     try {
-        await Workout.create(req.body)
+        const workout = new Workout({
+            userId: req.user,
+            exercise: req.body.exercise,
+            weight: req.body.weight,
+            sets: req.body.sets,
+            reps: req.body.reps,
+            restTime: req?.body?.restTime
+        })
+        await workout.save()
         return res.status(201).json({ success: true, message: 'Workout successfully added' })
     } catch (error) {
         res.status(400)
@@ -48,8 +56,20 @@ const deleteWorkout = asyncHandler(async (req: Request, res: Response) => {
     }
 });
 
+const getMyWorkouts = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const workouts = await Workout.find({userId: req.user})
+        res.json(workouts)
+    } catch (error) {
+        res.status(500).json({ success: false, message: "This User has not saved any workouts yet"})
+    }
+});
+
+
+
 export default {
     createWorkout,
     updateWorkout,
-    deleteWorkout
+    deleteWorkout,
+    getMyWorkouts
 }

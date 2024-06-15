@@ -14,6 +14,7 @@ const commentSchema = new mongoose.Schema({
 const workoutSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true,
         ref: 'User'
     },
     exercise: {

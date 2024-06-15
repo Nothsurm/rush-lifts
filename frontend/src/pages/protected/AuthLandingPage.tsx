@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import Dashboard from "./protected/Dashboard"
-import Profile from "./protected/Profile"
-import Workout from "./protected/Workout"
+import Dashboard from "./Dashboard"
+import Profile from "./Profile"
+import Workout from "./Workout"
 
 export default function AuthLandingPage() {
   return (
