@@ -128,7 +128,7 @@ export default function Home() {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              { currentUser ? (
+              { currentUser?.verified ? (
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <UsernameMenu />
                 </NavigationMenuLink>
