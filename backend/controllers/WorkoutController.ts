@@ -10,6 +10,7 @@ const createWorkout = asyncHandler(async (req: Request, res: Response) => {
             weight: req.body.weight,
             sets: req.body.sets,
             reps: req.body.reps,
+            createdAt: req.body.createdAt,
             restTime: req?.body?.restTime
         })
         await workout.save()
@@ -28,6 +29,7 @@ const updateWorkout = asyncHandler(async (req: Request, res: Response) => {
         workout.weight = req.body.name || workout.weight
         workout.sets = req.body.sets || workout.sets
         workout.reps = req.body.reps || workout.reps
+        workout.createdAt = req.body.createdAt || workout.createdAt
         workout.restTime = req.body.restTime || workout.restTime
 
         const updateWorkout = await workout?.save()
@@ -36,6 +38,7 @@ const updateWorkout = asyncHandler(async (req: Request, res: Response) => {
         weight: updateWorkout?.weight,
         sets: updateWorkout?.sets,
         reps: updateWorkout?.reps,
+        createdAt: updateWorkout?.createdAt,
         restTime: updateWorkout?.restTime
     })
     } else {

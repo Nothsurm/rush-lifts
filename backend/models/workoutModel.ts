@@ -33,6 +33,10 @@ const workoutSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    createdAt: {
+        type: Date,
+        required: true
+    },
     restTime: {
         type: String,
         required: false

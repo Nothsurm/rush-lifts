@@ -49,7 +49,7 @@ export default function WorkoutModal() {
   
     console.log(formData);
 
-    console.log(date);
+    console.log(date?.toISOString());
     
     
     
@@ -93,7 +93,7 @@ export default function WorkoutModal() {
 
     const handleChange = (e: any) => {
         setFormData({
-            ...formData, [e.target.id]: e.target.value
+            ...formData, [e.target.id]: e.target.value,
         })
     }
 
@@ -123,11 +123,11 @@ export default function WorkoutModal() {
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
-                                mode="single"
-                                selected={date}
-                                onSelect={setDate}
-                                initialFocus
-                                id="date"
+                                    mode="single"
+                                    selected={date}
+                                    onSelect={setDate}
+                                    initialFocus
+                                    id="createdAt"
                                 />
                             </PopoverContent>
                         </Popover>
