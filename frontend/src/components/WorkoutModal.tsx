@@ -40,18 +40,19 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
+import { useCreateWorkoutMutation } from "@/redux/api/workoutApiSlice";
 
 
 export default function WorkoutModal() {
-    const [date, setDate] = useState<Date>()
+    const [createdAt, setCreatedAt] = useState<Date>()
     const [formData, setFormData] = useState<any>('')
+    const [exercise, setExercise] = useState('')
+    const [reps, setReps] = useState('')
+    const [sets, setSets] = useState('')
+    const [weight, setWeight] = useState('')
     const [loading, setLoading] = useState(false)
-  
-    console.log(formData);
+    const [createWorkout, {isLoading}] = useCreateWorkoutMutation()
 
-    console.log(date?.toISOString());
-    
-    
     
   
     /*const handleAdd = () => {
@@ -67,9 +68,8 @@ export default function WorkoutModal() {
   
     const handleSubmit = async (e: any) => {
         e.preventDefault()
-        setLoading(true)
         try {
-            const result = await fetch('/api/workouts/createWorkout', {
+            /*const result = await fetch('/api/workouts/createWorkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,18 +84,21 @@ export default function WorkoutModal() {
             } else {
                 setLoading(false)
                 toast.success(data.message)
-            }
+            }*/
+           const res = await createWorkout({exercise, weight, sets, reps, createdAt}).unwrap()
+           console.log(...res);
+           toast.success('Workout successfully added')
         } catch (error: any) {
             toast.error(error.message)
         }
         
     }
 
-    const handleChange = (e: any) => {
+    /*const handleChange = (e: any) => {
         setFormData({
             ...formData, [e.target.id]: e.target.value,
         })
-    }
+    }*/
 
 
   return (
@@ -118,14 +121,14 @@ export default function WorkoutModal() {
                                     variant={"outline"}
                                 >
                                     <FaRegCalendarAlt className="mr-2 h-4 w-4" />
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                    {createdAt ? format(createdAt, "PPP") : <span>Pick a date</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                     mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
+                                    selected={createdAt}
+                                    onSelect={setCreatedAt}
                                     initialFocus
                                     id="createdAt"
                                 />
@@ -136,7 +139,8 @@ export default function WorkoutModal() {
                             <Input 
                                 placeholder="Squats"
                                 id="exercise"
-                                onChange={handleChange}
+                                value={exercise}
+                                onChange={(e) => setExercise(e.target.value)}
                             />
                         </div>
                     </div>
@@ -147,7 +151,8 @@ export default function WorkoutModal() {
                                 placeholder="150"  
                                 className="w-[80px]"
                                 id="weight"
-                                onChange={handleChange}
+                                value={weight}
+                                onChange={(e) => setWeight(e.target.value)}
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -156,7 +161,8 @@ export default function WorkoutModal() {
                                 placeholder="5" 
                                 className="w-[60px]"
                                 id="sets"
-                                onChange={handleChange}
+                                value={sets}
+                                onChange={(e) => setSets(e.target.value)}
                             />
                         </div>
                         <div className="flex flex-col gap-2">
@@ -165,16 +171,17 @@ export default function WorkoutModal() {
                                 placeholder="10" 
                                 className="w-[60px]"
                                 id="reps"
-                                onChange={handleChange}
+                                value={reps}
+                                onChange={(e) => setReps(e.target.value)}
                             />
                         </div>
                     </div>
                     <Button 
                         type="submit"
                         className="bg-blue-500 hover:bg-blue-600 mt-10"
-                        disabled={loading}
+                        disabled={isLoading}
                     >
-                        {loading ? (
+                        {isLoading ? (
                             <p>Adding Workout...</p>
                         ) : (
                             <p>Add Workout</p>

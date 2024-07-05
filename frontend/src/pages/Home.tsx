@@ -152,7 +152,7 @@ export default function Home() {
     {/* HERO */}
     <div className='min-h-screen -mt-24' style={myStyle}>
         <div className="flex justify-center items-center min-h-screen">
-          <Link to='/login'>
+          <Link to='/authenticated/home'>
             <Button 
               className='text-xl p-6 hover:bg-stone-100 bg-transparent text-stone-100 hover:text-zinc-800' variant='outline'
             >

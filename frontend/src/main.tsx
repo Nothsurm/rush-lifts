@@ -35,12 +35,12 @@ const router = createBrowserRouter([
       { path: "/forgotPassword", element: <ForgotPassword /> },
       { path: "/resetPassword/:token", element: <ResetPassword /> },
       { path: "/verifyEmail", element: <VerifyEmail /> },
-      
+
       {/* PROTECTED ROUTE */},
       { path: "/authenticated", element: <ProtectedRoute/>,
         errorElement: <ErrorPage />,
         children: [
-          { path: "home", element: <AuthLandingPage />}
+          { path: "home", element: <AuthLandingPage />},
         ], 
       }
     ]
